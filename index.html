@@ -1312,8 +1312,16 @@
                 display: none;
             }
 
+            .about-content {
+                max-width: none;
+            }
+
             .trenches .container {
                 grid-template-columns: 1fr;
+            }
+
+            .trenches-content {
+                max-width: none;
             }
 
             .trenches-image {
@@ -1351,6 +1359,11 @@
         }
 
         @media (max-width: 640px) {
+            :root {
+                --space-xl: 3rem;
+                --space-lg: 2rem;
+            }
+
             .hero-visual {
                 height: 40vh;
             }
@@ -1399,6 +1412,57 @@
 
             .btn {
                 text-align: center;
+            }
+
+            /* About / Trenches mobile fixes */
+            .trenches {
+                padding: var(--space-lg) 0;
+            }
+
+            .trenches-text {
+                font-size: 0.9375rem;
+                line-height: 1.7;
+            }
+
+            .trenches-list {
+                margin-top: var(--space-md);
+            }
+
+            .trenches-list li {
+                padding: var(--space-xs) 0;
+            }
+
+            .trenches-list-content p {
+                font-size: 0.8125rem;
+            }
+
+            .about {
+                padding: var(--space-lg) 0;
+            }
+
+            .about-text {
+                font-size: 0.9375rem;
+                line-height: 1.7;
+            }
+
+            .about-tags {
+                margin-top: var(--space-md);
+            }
+
+            .principles {
+                padding: var(--space-lg) 0;
+            }
+
+            .principle {
+                padding: var(--space-md);
+            }
+
+            .contact {
+                padding: var(--space-lg) 0;
+            }
+
+            .contact-form-container {
+                padding: var(--space-md);
             }
         }
     </style>
