@@ -2066,6 +2066,7 @@
                                 </div>
                             `;
                             formStatus.className = 'form-status success';
+                            formStatus.style.display = 'block';
                         } else {
                             const data = await response.json();
                             throw new Error(data.error || 'Something went wrong.');
@@ -2073,6 +2074,7 @@
                     } catch (err) {
                         formStatus.textContent = err.message || 'Something went wrong. Please try again.';
                         formStatus.className = 'form-status error';
+                        formStatus.style.display = 'block';
                     } finally {
                         submitBtn.disabled = false;
                         submitBtn.querySelector('.btn-text').style.display = 'inline';
