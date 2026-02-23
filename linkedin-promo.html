@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Promo - Jake Miller</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        /* LinkedIn Post Size: 1200 x 627 */
+        .promo-card {
+            width: 1200px;
+            height: 627px;
+            background: #0D0D0D;
+            display: grid;
+            grid-template-columns: 45% 55%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Left side - Photo */
+        .promo-photo {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            filter: grayscale(20%);
+        }
+
+        .promo-photo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, transparent 60%, #0D0D0D 100%);
+        }
+
+        /* Right side - Content */
+        .promo-content {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .promo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: #0EA5A5;
+            letter-spacing: 0.1em;
+            margin-bottom: 24px;
+        }
+
+        .promo-badge::before {
+            content: '✓';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: #0EA5A5;
+            color: #0D0D0D;
+            border-radius: 50%;
+            font-size: 10px;
+        }
+
+        .promo-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 72px;
+            font-weight: 500;
+            color: #FFFFFF;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            margin-bottom: 24px;
+        }
+
+        .promo-title em {
+            font-style: normal;
+            color: #0EA5A5;
+            font-weight: 300;
+        }
+
+        .promo-tagline {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: #999;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .promo-subtitle {
+            font-size: 18px;
+            font-weight: 300;
+            color: #999999;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 420px;
+        }
+
+        .promo-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .promo-topic {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 8px 14px;
+            border: 1px solid #333;
+            color: #999;
+            letter-spacing: 0.05em;
+        }
+
+        .promo-topic.highlight {
+            border-color: #0EA5A5;
+            color: #0EA5A5;
+        }
+
+        .promo-cta {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: #FFFFFF;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .promo-cta-arrow {
+            color: #0EA5A5;
+            font-size: 18px;
+        }
+
+        /* Decorative elements */
+        .promo-accent-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, transparent, #0EA5A5, transparent);
+        }
+
+        .promo-corner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 1px solid #333;
+        }
+
+        .promo-corner.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .promo-corner.bottom-left {
+            bottom: 20px;
+            left: 50%;
+            border-right: none;
+            border-top: none;
+        }
+
+        /* Name lockup */
+        .promo-name {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            z-index: 10;
+        }
+
+        .promo-name-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: #FFFFFF;
+            letter-spacing: 0.1em;
+        }
+
+        .promo-name-role {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: #666;
+            letter-spacing: 0.1em;
+            margin-top: 4px;
+        }
+
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            font-size: 14px;
+            max-width: 300px;
+            line-height: 1.6;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .instructions code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h3>To export this image:</h3>
+        <p>1. Open browser DevTools (F12)</p>
+        <p>2. Right-click the card below</p>
+        <p>3. Select "Capture node screenshot"</p>
+        <p>Or use a screenshot tool at 1200x627px</p>
+    </div>
+
+    <div class="promo-card">
+        <div class="promo-photo">
+            <img src="img/jake.jpg" alt="Jake Miller">
+        </div>
+
+        <div class="promo-content">
+            <div class="promo-badge">Available for Speaking</div>
+            <h1 class="promo-title">Trust,<br><em>translated.</em></h1>
+            <p class="promo-subtitle">
+                Keynotes on AI, security, and trust—human systems for machine systems, translating machine behavior into human decisions.
+            </p>
+            <div class="promo-topics">
+                <span class="promo-topic highlight">AI & Attack Surfaces</span>
+                <span class="promo-topic">Trust as Infrastructure</span>
+                <span class="promo-topic">AI-Era Careers</span>
+                <span class="promo-topic">Build & Break Trust</span>
+            </div>
+            <div class="promo-cta">
+                <span class="promo-cta-arrow">></span>
+                Book a keynote
+            </div>
+        </div>
+
+        <div class="promo-name">
+            <div class="promo-name-text">JAKE MILLER</div>
+            <div class="promo-name-role">Human Systems Engineer</div>
+        </div>
+
+        <div class="promo-corner top-right"></div>
+        <div class="promo-corner bottom-left"></div>
+        <div class="promo-accent-line"></div>
+    </div>
+</body>
+</html>

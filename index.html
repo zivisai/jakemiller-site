@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jake Miller — Trust, Translated</title>
+
+    <!-- Fonts: Playfair Display (editorial) + Inter (modern) + JetBrains Mono (nerd) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Editorial + Nerd Palette */
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --black: #0D0D0D;
+            --gray-dark: #1A1A1A;
+            --gray-mid: #666666;
+            --gray-light: #999999;
+            --gray-rule: #E0E0E0;
+
+            /* Trust accent - deep teal, implies security + sophistication */
+            --accent: #0EA5A5;
+            --accent-dim: rgba(14, 165, 165, 0.1);
+
+            /* Typography */
+            --font-display: 'Space Grotesk', -apple-system, sans-serif;
+            --font-body: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'Space Mono', 'Fira Code', monospace;
+
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+            --space-xl: 8rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            font-size: 1rem;
+            font-weight: 300;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Utility */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        .accent {
+            color: var(--accent);
+        }
+
+        /* Verified badge */
+        .verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--accent);
+            letter-spacing: 0.05em;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .verified::before {
+            content: '✓';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            background: var(--accent);
+            color: var(--white);
+            border-radius: 50%;
+            font-size: 0.5rem;
+            animation: pulse-check 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-check {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 165, 0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(14, 165, 165, 0); }
+        }
+
+        /* Blinking cursor */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--accent);
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ========== ANIMATIONS ========== */
+
+        /* Fade up animation */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Scale in animation */
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Slide in from left */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Slide in from right */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Image reveal */
+        @keyframes imageReveal {
+            from {
+                clip-path: inset(0 100% 0 0);
+            }
+            to {
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        /* Scroll-triggered animation base state */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger delays for children */
+        .stagger-children > *:nth-child(1) { transition-delay: 0s; }
+        .stagger-children > *:nth-child(2) { transition-delay: 0.1s; }
+        .stagger-children > *:nth-child(3) { transition-delay: 0.2s; }
+        .stagger-children > *:nth-child(4) { transition-delay: 0.3s; }
+        .stagger-children > *:nth-child(5) { transition-delay: 0.4s; }
+
+        /* Image animation states */
+        .animate-image {
+            opacity: 0;
+            transform: scale(1.05);
+            transition: opacity 1s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .animate-image.is-visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Hero entrance animations */
+        .hero-content > * {
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .hero-content > *:nth-child(1) { animation-delay: 0.2s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.35s; }
+        .hero-content > *:nth-child(3) { animation-delay: 0.5s; }
+        .hero-content > *:nth-child(4) { animation-delay: 0.65s; }
+
+        .hero-visual {
+            opacity: 0;
+            animation: scaleIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.4s;
+        }
+
+        /* Navigation */
+        nav {
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid var(--black);
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo:hover {
+            opacity: 0.7;
+        }
+
+        .logo-lock {
+            color: var(--accent);
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover .logo-lock {
+            transform: rotate(45deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-lg);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--black);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .nav-links a::before {
+            content: '/';
+            color: var(--gray-light);
+            margin-right: 2px;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover::before {
+            color: var(--accent);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 90vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--black);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content-wrapper {
+            display: flex;
+            align-items: center;
+            padding: var(--space-xl);
+            padding-left: calc((100vw - 1400px) / 2 + var(--space-md));
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content {
+            max-width: 550px;
+        }
+
+        .hero-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            color: var(--gray-light);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 500;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            margin-bottom: var(--space-md);
+            color: var(--white);
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            color: var(--accent);
+            font-weight: 300;
+        }
+
+        .hero-tagline {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--gray-mid);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: var(--space-md);
+        }
+
+        .hero-text {
+            font-size: 1.0625rem;
+            line-height: 1.8;
+            color: var(--gray-light);
+            max-width: 480px;
+        }
+
+        .hero-cta {
+            margin-top: var(--space-lg);
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .hero .btn-outline {
+            border-color: var(--gray-dark);
+            color: var(--white);
+        }
+
+        .hero .btn-outline:hover {
+            border-color: var(--white);
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-101%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: -1;
+        }
+
+        .btn-primary {
+            background: var(--black);
+            color: var(--white);
+            border: 1px solid var(--black);
+            z-index: 1;
+        }
+
+        .btn-primary:hover {
+            border-color: var(--accent);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(14, 165, 165, 0.3);
+        }
+
+        .btn-primary:hover::after {
+            transform: translateX(0);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--black);
+            border: 1px solid var(--gray-rule);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--black);
+            transform: translateY(-2px);
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, var(--black) 0%, transparent 30%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            filter: grayscale(30%) contrast(1.1);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 0.5s ease;
+        }
+
+        .hero:hover .hero-image {
+            transform: scale(1.02);
+            filter: grayscale(10%) contrast(1.1);
+        }
+
+        /* Accent line on hero */
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+            z-index: 10;
+        }
+
+        /* Decorative element */
+        .hero-accent {
+            position: absolute;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            color: var(--gray-dark);
+            letter-spacing: 0.1em;
+            writing-mode: vertical-rl;
+            z-index: 5;
+        }
+
+        /* Section Divider */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--black);
+            margin: 0;
+        }
+
+        /* Tagline Section */
+        .tagline {
+            padding: var(--space-lg) 0;
+            border-bottom: 1px solid var(--black);
+        }
+
+        .tagline-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tagline-text {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--gray-mid);
+            letter-spacing: 0.1em;
+        }
+
+        .tagline-text span {
+            color: var(--black);
+        }
+
+        /* Speaking Section */
+        .speaking {
+            padding: var(--space-xl) 0;
+        }
+
+        .section-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            align-items: end;
+        }
+
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gray-mid);
+            margin-bottom: var(--space-xs);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .section-intro {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--gray-mid);
+            max-width: 400px;
+        }
+
+        /* Speaking Grid */
+        .speaking-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid var(--black);
+            border-left: 1px solid var(--black);
+        }
+
+        .speaking-item {
+            padding: var(--space-lg) var(--space-md);
+            border-right: 1px solid var(--black);
+            border-bottom: 1px solid var(--black);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .speaking-item::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .speaking-item:hover {
+            background: var(--accent-dim);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .speaking-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .speaking-item:hover .speaking-number {
+            color: var(--accent);
+        }
+
+        .speaking-item:hover .speaking-title {
+            color: var(--accent);
+            transition: color 0.3s ease;
+        }
+
+        .speaking-number {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--gray-light);
+            margin-bottom: var(--space-lg);
+            transition: color 0.3s ease;
+        }
+
+        .speaking-audience {
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--gray-mid);
+            margin-bottom: var(--space-xs);
+        }
+
+        .speaking-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: var(--space-sm);
+            line-height: 1.2;
+        }
+
+        .speaking-description {
+            font-size: 0.9375rem;
+            line-height: 1.7;
+            color: var(--gray-mid);
+        }
+
+        .speaking-alt-title {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--accent);
+            margin-bottom: var(--space-xs);
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .speaking-bullets {
+            list-style: none;
+            margin-top: var(--space-sm);
+            padding: 0;
+            font-size: 0.8125rem;
+            line-height: 1.6;
+            color: var(--gray-mid);
+        }
+
+        .speaking-bullets li {
+            padding-left: 1rem;
+            position: relative;
+            margin-bottom: 0.35rem;
+        }
+
+        .speaking-bullets li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+
+        /* Signature Keynote */
+        .signature-keynote {
+            padding: var(--space-lg);
+            background: var(--black);
+            color: var(--white);
+            margin-bottom: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signature-keynote::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+        }
+
+        .signature-keynote::after {
+            content: '◈';
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            font-size: 3rem;
+            color: var(--gray-dark);
+            opacity: 0.3;
+        }
+
+        .signature-label {
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: var(--space-sm);
+        }
+
+        .signature-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--space-xs);
+            line-height: 1.1;
+        }
+
+        .signature-subtitle {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 300;
+            color: var(--gray-light);
+            margin-bottom: var(--space-md);
+            font-style: italic;
+        }
+
+        .signature-description {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--gray-light);
+            max-width: 700px;
+            margin-bottom: var(--space-md);
+        }
+
+        .signature-themes {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        .signature-themes span {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            padding: 0.4rem 0.75rem;
+            border: 1px solid var(--gray-dark);
+            color: var(--gray-light);
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        .signature-themes span:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Custom Keynote */
+        .speaking-custom {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: var(--space-xl);
+            align-items: center;
+            padding: var(--space-lg);
+        }
+
+        .speaking-custom .speaking-number {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            color: var(--gray-rule);
+            margin-bottom: 0;
+        }
+
+        /* About Section */
+        .about {
+            padding: var(--space-xl) 0;
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .about .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            align-items: center;
+        }
+
+        .about-visual {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--gray-mid);
+            line-height: 2.2;
+        }
+
+        .about-visual .line-num {
+            color: var(--gray-dark);
+            user-select: none;
+            display: inline-block;
+            width: 2rem;
+        }
+
+        .about-visual .highlight {
+            color: var(--accent);
+        }
+
+        .about-visual .string {
+            color: #E9967A;
+        }
+
+        .about-content {
+            max-width: 500px;
+        }
+
+        .about .section-label {
+            color: var(--gray-mid);
+        }
+
+        .about .section-title {
+            color: var(--white);
+            margin-bottom: var(--space-lg);
+        }
+
+        .about-text {
+            font-size: 1.0625rem;
+            line-height: 1.9;
+            color: var(--gray-light);
+            margin-bottom: var(--space-md);
+        }
+
+        .about-text:first-of-type {
+            color: var(--white);
+        }
+
+        .about-tags {
+            margin-top: var(--space-lg);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .about-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-dark);
+            color: var(--gray-light);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .about-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .about-tag.highlight {
+            border-color: var(--accent);
+            color: var(--accent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 165, 0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(14, 165, 165, 0); }
+        }
+
+        /* In the Trenches Section */
+        .trenches {
+            padding: var(--space-xl) 0;
+            background: var(--off-white);
+        }
+
+        .trenches .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            align-items: center;
+        }
+
+        .trenches-image {
+            position: relative;
+            aspect-ratio: 4/5;
+            overflow: hidden;
+        }
+
+        .trenches-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(30%);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 0.5s ease;
+        }
+
+        .trenches-image:hover img {
+            transform: scale(1.05);
+            filter: grayscale(0%);
+        }
+
+        .trenches-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid var(--black);
+            pointer-events: none;
+            transition: inset 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .trenches-image:hover::after {
+            inset: 8px;
+        }
+
+        .trenches-content {
+            max-width: 500px;
+        }
+
+        .trenches-content .section-title {
+            margin-bottom: var(--space-lg);
+        }
+
+        .trenches-text {
+            font-size: 1.0625rem;
+            line-height: 1.9;
+            color: var(--gray-dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .trenches-list {
+            list-style: none;
+            margin-top: var(--space-lg);
+            border-top: 1px solid var(--gray-rule);
+        }
+
+        .trenches-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--gray-rule);
+            transition: transform 0.3s ease, padding-left 0.3s ease;
+        }
+
+        .trenches-list li:hover {
+            padding-left: var(--space-sm);
+        }
+
+        .trenches-list li:hover .trenches-list-icon {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+
+        .trenches-list-icon {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            flex-shrink: 0;
+            padding-top: 0.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .trenches-list-content h4 {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 400;
+            margin-bottom: 0.25rem;
+        }
+
+        .trenches-list-content p {
+            font-size: 0.875rem;
+            color: var(--gray-mid);
+            line-height: 1.6;
+        }
+
+        /* Principles Section */
+        .principles {
+            padding: var(--space-xl) 0;
+            border-bottom: 1px solid var(--black);
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .principle {
+            padding-right: var(--space-md);
+        }
+
+        .principle-icon {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: var(--space-sm);
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .principle:hover .principle-icon {
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .principle-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .principle-text {
+            font-size: 0.9375rem;
+            color: var(--gray-mid);
+            line-height: 1.7;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: var(--space-xl) 0;
+        }
+
+        .contact-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            align-items: start;
+        }
+
+        .contact-header {
+            position: sticky;
+            top: var(--space-lg);
+        }
+
+        .contact-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--space-md);
+        }
+
+        .contact-title em {
+            font-style: italic;
+        }
+
+        .contact-subtitle {
+            font-size: 1rem;
+            color: var(--gray-mid);
+            line-height: 1.6;
+            max-width: 400px;
+        }
+
+        .contact-form-container {
+            background: var(--off-white);
+            padding: var(--space-lg);
+            border: 1px solid var(--gray-rule);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .form-group label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            color: var(--gray-dark);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--gray-rule);
+            background: var(--white);
+            color: var(--black);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--gray-light);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-submit {
+            width: 100%;
+            margin-top: var(--space-sm);
+        }
+
+        .form-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .form-status {
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0;
+            display: none;
+        }
+
+        .form-status.success {
+            display: block;
+            background: rgba(14, 165, 165, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .form-status.error {
+            display: block;
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid #dc3545;
+            color: #dc3545;
+        }
+
+        .contact-alt {
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--gray-rule);
+            text-align: center;
+        }
+
+        .contact-label {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--gray-mid);
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+
+        .contact-email {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--black);
+            text-decoration: none;
+            border-bottom: 1px solid var(--gray-rule);
+            padding-bottom: 0.25rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-block;
+        }
+
+        .contact-email:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-lg) 0;
+            border-top: 1px solid var(--black);
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--gray-mid);
+            letter-spacing: 0.05em;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .footer-links a {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--black);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .footer-links a::before {
+            content: '→ ';
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-links a:hover::before {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .hero-content-wrapper {
+                padding: var(--space-xl) var(--space-md);
+                order: 2;
+            }
+
+            .hero-visual {
+                height: 50vh;
+                order: 1;
+            }
+
+            .hero-visual::before {
+                background: linear-gradient(to top, var(--black) 10%, transparent 50%);
+            }
+
+            .hero-accent {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.5rem, 8vw, 4rem);
+            }
+
+            .section-header {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+
+            .speaking-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .speaking-item.speaking-custom {
+                grid-column: span 2;
+            }
+
+            .about .container {
+                grid-template-columns: 1fr;
+            }
+
+            .about-visual {
+                display: none;
+            }
+
+            .trenches .container {
+                grid-template-columns: 1fr;
+            }
+
+            .trenches-image {
+                order: -1;
+                aspect-ratio: 16/9;
+            }
+
+            .principles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-inner {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+            }
+
+            .contact-header {
+                position: static;
+                text-align: center;
+            }
+
+            .contact-subtitle {
+                max-width: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tagline-inner {
+                flex-direction: column;
+                gap: var(--space-sm);
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-visual {
+                height: 40vh;
+            }
+
+            .hero-content-wrapper {
+                padding: var(--space-lg) var(--space-md);
+            }
+
+            .hero-label {
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+
+            .speaking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .speaking-custom {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+
+            .speaking-custom .speaking-number {
+                font-size: 1.5rem;
+            }
+
+            .signature-keynote {
+                padding: var(--space-md);
+            }
+
+            .signature-keynote::after {
+                display: none;
+            }
+
+            .signature-themes {
+                gap: 0.5rem;
+            }
+
+            .nav-links {
+                gap: var(--space-md);
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-inner">
+                <div class="logo"><span class="logo-lock">◈</span> jake.miller</div>
+                <ul class="nav-links">
+                    <li><a href="#speaking">speaking</a></li>
+                    <li><a href="#about">about</a></li>
+                    <li><a href="#contact">contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content-wrapper">
+            <div class="hero-content">
+                <span class="hero-label">
+                    <span class="verified">verified human</span>
+                    <span style="margin-left: 0.5rem; color: var(--gray-mid);">|</span>
+                    <span style="margin-left: 0.5rem;">Human Systems Engineer</span>
+                </span>
+                <h1>Trust,<br><em>translated.</em></h1>
+                <p class="hero-text">
+                    Keynotes on AI, security, and trust—human systems for machine systems,
+                    translating machine behavior into human decisions. Twenty-five years
+                    of building secure systems, distilled for your audience.
+                </p>
+                <div class="hero-cta">
+                    <a href="#contact" class="btn btn-primary">Book Jake</a>
+                    <a href="#speaking" class="btn btn-outline">View topics</a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <img src="img/jake.jpg" alt="Jake Miller" class="hero-image">
+        </div>
+        <span class="hero-accent">KEYNOTE SPEAKER</span>
+    </section>
+
+    <div class="tagline">
+        <div class="container">
+            <div class="tagline-inner">
+                <span class="tagline-text"><span>Zero jargon.</span> Full trust.</span>
+                <span class="tagline-text"><span>Private insights.</span> Public impact.</span>
+                <span class="tagline-text"><span>Human-verified</span> in an AI world.</span>
+            </div>
+        </div>
+    </div>
+
+    <section id="speaking" class="speaking">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <span class="section-label">// speaking</span>
+                    <h2 class="section-title">Keynotes</h2>
+                </div>
+                <p class="section-intro">
+                    Talks defined by audience, technical depth, and outcome.
+                    Systems, trust, architecture, human judgment—and how AI
+                    changes the way software and work actually happen.
+                </p>
+            </div>
+
+            <!-- Signature Keynote -->
+            <div class="signature-keynote">
+                <div class="signature-label">Signature Keynote</div>
+                <h3 class="signature-title">Does Not Compute</h3>
+                <p class="signature-subtitle">Staying Human While We Rebuild How Software Works</p>
+                <p class="signature-description">
+                    The talk that blends technical reality (deterministic → probabilistic systems),
+                    business implications (trust, risk, buyer confidence), and the human story
+                    (judgment, relationships, identity, work). Adaptable for technical, executive,
+                    or student audiences.
+                </p>
+                <div class="signature-themes">
+                    <span>architecture</span>
+                    <span>strategy</span>
+                    <span>career + future of work</span>
+                </div>
+            </div>
+
+            <div class="speaking-grid">
+                <div class="speaking-item">
+                    <span class="speaking-number">[0]</span>
+                    <span class="speaking-audience">Engineers & Security Teams</span>
+                    <h3 class="speaking-title">Building Trust Into the Stack</h3>
+                    <p class="speaking-description">
+                        How AI changes attack surfaces, trust boundaries, and runtime behavior—and what to do about it.
+                    </p>
+                    <ul class="speaking-bullets">
+                        <li>Agent/tool risk, prompt injection, memory leakage</li>
+                        <li>"Show, not tell" security posture in AI systems</li>
+                        <li>Embedding oversight into workflows, not just audits</li>
+                        <li>What breaks when software becomes probabilistic</li>
+                    </ul>
+                </div>
+
+                <div class="speaking-item">
+                    <span class="speaking-number">[1]</span>
+                    <span class="speaking-audience">CTOs, CISOs, Technical Executives</span>
+                    <h3 class="speaking-title">Trust as an Operating System</h3>
+                    <p class="speaking-description">
+                        How to make trust a product and engineering capability—not a policy document.
+                    </p>
+                    <ul class="speaking-bullets">
+                        <li>Where boards and buyers are heading (proof over promises)</li>
+                        <li>Converting security/compliance into delivery advantage</li>
+                        <li>Human + AI operating models for trust and oversight</li>
+                        <li>What "enterprise-ready" AI actually requires</li>
+                    </ul>
+                </div>
+
+                <div class="speaking-item">
+                    <span class="speaking-number">[2]</span>
+                    <span class="speaking-audience">Business Leaders & Operators</span>
+                    <h3 class="speaking-title">The New Constraint</h3>
+                    <p class="speaking-description">
+                        AI makes it easier to build, easier to ship, and easier to break trust.
+                    </p>
+                    <ul class="speaking-bullets">
+                        <li>Why trust is now a growth constraint (sales, partnerships, procurement)</li>
+                        <li>Hidden risks in AI workflows (not just model risk)</li>
+                        <li>Privacy, responsibility, and brand exposure together</li>
+                        <li>Moving fast without losing confidence</li>
+                    </ul>
+                </div>
+
+                <div class="speaking-item">
+                    <span class="speaking-number">[3]</span>
+                    <span class="speaking-audience">Students & Early-Career Builders</span>
+                    <h3 class="speaking-title">The Next Builders</h3>
+                    <p class="speaking-alt-title">Alt: "You're Not Competing With AI—You're Competing With People Who Know How to Use It Well"</p>
+                    <p class="speaking-description">
+                        How to build your career when everyone has AI tools. Optimistic and practical.
+                    </p>
+                    <ul class="speaking-bullets">
+                        <li>What skills still matter when AI generates code/content</li>
+                        <li>Why systems thinking and judgment become more valuable</li>
+                        <li>Building credibility: ship, test, explain, repeat</li>
+                        <li>Security + trust as a career advantage</li>
+                    </ul>
+                </div>
+
+                <div class="speaking-item">
+                    <span class="speaking-number">[4]</span>
+                    <span class="speaking-audience">Cross-Functional Teams</span>
+                    <h3 class="speaking-title">When Everything Becomes a Workflow</h3>
+                    <p class="speaking-description">
+                        Designing AI-enabled work that people can actually trust.
+                    </p>
+                    <ul class="speaking-bullets">
+                        <li>AI changing interfaces from dashboards to conversations</li>
+                        <li>Why trust failures happen between teams, not just in code</li>
+                        <li>Product/design/security co-owning trust decisions</li>
+                        <li>Practical patterns for human-in-the-loop systems</li>
+                    </ul>
+                </div>
+
+                <div class="speaking-item">
+                    <span class="speaking-number">[5]</span>
+                    <span class="speaking-audience">General Audience</span>
+                    <h3 class="speaking-title">Trust, Actually</h3>
+                    <p class="speaking-description">
+                        How to stay grounded when technology can simulate almost anything.
+                    </p>
+                    <ul class="speaking-bullets">
+                        <li>What's changing in how we verify reality</li>
+                        <li>What remains fundamentally human</li>
+                        <li>How to build discernment in an AI world</li>
+                        <li>Where trust comes from now</li>
+                    </ul>
+                </div>
+
+                <div class="speaking-item speaking-custom">
+                    <span class="speaking-number">[ + ]</span>
+                    <div>
+                        <span class="speaking-audience">Bespoke</span>
+                        <h3 class="speaking-title">Custom Keynotes</h3>
+                        <p class="speaking-description">
+                            Every talk can be tailored. Different audiences get different depth,
+                            different framing, different outcomes—same core insights.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="principles">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <span class="section-label">// principles</span>
+                    <h2 class="section-title">The approach</h2>
+                </div>
+            </div>
+            <div class="principles-grid">
+                <div class="principle">
+                    <div class="principle-icon">◇</div>
+                    <h3 class="principle-title">Clarity over complexity</h3>
+                    <p class="principle-text">
+                        Deep technical knowledge, translated into language anyone
+                        can act on. No jargon gatekeeping.
+                    </p>
+                </div>
+                <div class="principle">
+                    <div class="principle-icon">◈</div>
+                    <h3 class="principle-title">Trust is earned</h3>
+                    <p class="principle-text">
+                        Every claim verifiable. Every insight grounded in 25 years
+                        of building systems that protect people.
+                    </p>
+                </div>
+                <div class="principle">
+                    <div class="principle-icon">◆</div>
+                    <h3 class="principle-title">Human-first futures</h3>
+                    <p class="principle-text">
+                        Technology should serve people, not surveil them.
+                        Optimistic but clear-eyed about what's at stake.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trenches">
+        <div class="container">
+            <div class="trenches-image">
+                <img src="img/jake-hoodie.jpg" alt="Jake Miller working">
+            </div>
+            <div class="trenches-content">
+                <span class="section-label">// in the trenches</span>
+                <h2 class="section-title">Still building.</h2>
+                <p class="trenches-text">
+                    I don't just talk about technology—I'm still in it, every day.
+                    Hands-on work keeps the insights real and the advice grounded.
+                </p>
+                <ul class="trenches-list">
+                    <li>
+                        <span class="trenches-list-icon">></span>
+                        <div class="trenches-list-content">
+                            <h4>Writing code</h4>
+                            <p>Security tooling, AI integrations, and systems architecture. Still shipping.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="trenches-list-icon">></span>
+                        <div class="trenches-list-content">
+                            <h4>Adversarial testing</h4>
+                            <p>Red teaming AI systems, breaking things to understand how to build them better.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="trenches-list-icon">></span>
+                        <div class="trenches-list-content">
+                            <h4>Speaking & teaching</h4>
+                            <p>Keynotes, workshops, and executive briefings. Translating complexity into action.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-visual">
+                <span class="line-num">01</span> <span class="highlight">class</span> TrustedAdvisor {<br>
+                <span class="line-num">02</span>   experience = <span class="string">"25 years"</span>;<br>
+                <span class="line-num">03</span>   clearance = <span class="string">"full-stack"</span>;<br>
+                <span class="line-num">04</span><br>
+                <span class="line-num">05</span>   <span class="highlight">constructor</span>() {<br>
+                <span class="line-num">06</span>     this.nerd = <span class="highlight">true</span>;<br>
+                <span class="line-num">07</span>     this.gatekeeping = <span class="highlight">false</span>;<br>
+                <span class="line-num">08</span>     this.verified = <span class="highlight">true</span>;<br>
+                <span class="line-num">09</span>   }<br>
+                <span class="line-num">10</span><br>
+                <span class="line-num">11</span>   <span class="highlight">translate</span>(complexity) {<br>
+                <span class="line-num">12</span>     <span class="highlight">return</span> clarity;<br>
+                <span class="line-num">13</span>   }<br>
+                <span class="line-num">14</span> }
+            </div>
+            <div class="about-content">
+                <span class="section-label">// about</span>
+                <h2 class="section-title">Trusted source.</h2>
+                <p class="about-text">
+                    Twenty-five years building systems where trust isn't optional—it's
+                    the architecture. From enterprise security to AI safety, I've led
+                    teams through the hardest problems in tech.
+                </p>
+                <p class="about-text">
+                    Now I translate that depth for audiences who need to understand
+                    what's happening—and what to do about it. Whether you're a room
+                    of CISOs or a general audience worried about deepfakes.
+                </p>
+                <p class="about-text">
+                    A proud nerd with thick black glasses who believes the future
+                    belongs to those who can explain it clearly.
+                </p>
+                <div class="about-tags">
+                    <span class="about-tag highlight">verified: true</span>
+                    <span class="about-tag">trust</span>
+                    <span class="about-tag">security</span>
+                    <span class="about-tag">privacy</span>
+                    <span class="about-tag">AI safety</span>
+                    <span class="about-tag">nerd</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-inner">
+                <div class="contact-header">
+                    <h2 class="contact-title">Let's <em>talk.</em></h2>
+                    <p class="contact-subtitle">Tell me about your event and I'll get back to you within 24 hours.</p>
+                </div>
+                <div class="contact-form-container">
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Name *</label>
+                                <input type="text" id="name" name="name" required placeholder="Your name">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" required placeholder="you@company.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Organization</label>
+                            <input type="text" id="company" name="company" placeholder="Your company or event (optional)">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" required rows="4" placeholder="Tell me about your event, audience, and what you're looking for..."></textarea>
+                        </div>
+                        <div class="form-status" id="form-status"></div>
+                        <button type="submit" class="btn btn-primary form-submit" id="form-submit">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-loading" style="display: none;">Sending...</span>
+                        </button>
+                    </form>
+                    <div class="contact-alt">
+                        <span class="contact-label">// or reach out directly</span>
+                        <a href="mailto:speaking@jakemiller.com" class="contact-email">speaking@jakemiller.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+                <span class="footer-text">© 2026 jake.miller — human-verified</span>
+                <div class="footer-links">
+                    <a href="#">LinkedIn</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll-triggered animations using Intersection Observer
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elements to animate on scroll
+            const animateElements = document.querySelectorAll(`
+                .section-header,
+                .section-title,
+                .signature-keynote,
+                .speaking-item,
+                .principle,
+                .trenches-content,
+                .about-content,
+                .contact-inner > *,
+                .tagline-text
+            `);
+
+            // Images to animate
+            const animateImages = document.querySelectorAll(`
+                .trenches-image
+            `);
+
+            // Add animation classes
+            animateElements.forEach(el => {
+                el.classList.add('animate-on-scroll');
+            });
+
+            animateImages.forEach(el => {
+                el.classList.add('animate-image');
+            });
+
+            // Create observer
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        // Optional: unobserve after animation
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all elements
+            document.querySelectorAll('.animate-on-scroll, .animate-image').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Parallax effect on hero image
+            const heroImage = document.querySelector('.hero-image');
+            if (heroImage) {
+                window.addEventListener('scroll', () => {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * 0.3;
+                    if (scrolled < window.innerHeight) {
+                        heroImage.style.transform = `translateY(${rate}px) scale(1.03)`;
+                    }
+                }, { passive: true });
+            }
+
+            // Smooth reveal for trenches list items
+            const trenchesItems = document.querySelectorAll('.trenches-list li');
+            trenchesItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                item.style.transition = `opacity 0.5s ease ${index * 0.15}s, transform 0.5s ease ${index * 0.15}s`;
+            });
+
+            const trenchesList = document.querySelector('.trenches-list');
+            if (trenchesList) {
+                const listObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            trenchesItems.forEach(item => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'translateX(0)';
+                            });
+                        }
+                    });
+                }, { threshold: 0.2 });
+                listObserver.observe(trenchesList);
+            }
+
+            // Hover tilt effect on speaking items (subtle)
+            const speakingItems = document.querySelectorAll('.speaking-item:not(.speaking-custom)');
+            speakingItems.forEach(item => {
+                item.addEventListener('mousemove', (e) => {
+                    const rect = item.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = (centerX - x) / 20;
+                    item.style.transform = `translateY(-4px) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+
+                item.addEventListener('mouseleave', () => {
+                    item.style.transform = 'translateY(0) perspective(1000px) rotateX(0) rotateY(0)';
+                });
+            });
+
+            // Typing effect for verified badge (optional enhancement)
+            const verified = document.querySelector('.verified');
+            if (verified) {
+                verified.style.opacity = '0';
+                setTimeout(() => {
+                    verified.style.transition = 'opacity 0.5s ease';
+                    verified.style.opacity = '1';
+                }, 800);
+            }
+
+            // Contact form submission
+            const contactForm = document.getElementById('contact-form');
+            const formStatus = document.getElementById('form-status');
+            const submitBtn = document.getElementById('form-submit');
+            const API_BASE = 'https://zivis-web-fx-fka8a6gcfwc8b6hh.centralus-01.azurewebsites.net';
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const formData = {
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        company: document.getElementById('company').value,
+                        message: document.getElementById('message').value
+                    };
+
+                    // Update UI to loading state
+                    submitBtn.disabled = true;
+                    submitBtn.querySelector('.btn-text').style.display = 'none';
+                    submitBtn.querySelector('.btn-loading').style.display = 'inline';
+                    formStatus.className = 'form-status';
+                    formStatus.style.display = 'none';
+
+                    try {
+                        const response = await fetch(`${API_BASE}/api/contact`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(formData),
+                        });
+
+                        if (response.ok) {
+                            formStatus.textContent = "Message sent! I'll get back to you soon.";
+                            formStatus.className = 'form-status success';
+                            contactForm.reset();
+                        } else {
+                            const data = await response.json();
+                            throw new Error(data.error || 'Something went wrong.');
+                        }
+                    } catch (err) {
+                        formStatus.textContent = err.message || 'Something went wrong. Please try again.';
+                        formStatus.className = 'form-status error';
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('.btn-text').style.display = 'inline';
+                        submitBtn.querySelector('.btn-loading').style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
