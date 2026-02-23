@@ -1179,6 +1179,37 @@
             color: #dc3545;
         }
 
+        .thank-you-message {
+            text-align: center;
+            padding: var(--space-lg) var(--space-md);
+        }
+
+        .thank-you-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            color: var(--white);
+            border-radius: 50%;
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .thank-you-message h3 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 500;
+            color: var(--black);
+            margin-bottom: var(--space-xs);
+        }
+
+        .thank-you-message p {
+            font-size: 1rem;
+            color: var(--gray-mid);
+        }
+
         .contact-alt {
             margin-top: var(--space-lg);
             padding-top: var(--space-md);
@@ -1996,11 +2027,16 @@
                 contactForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
 
+                    // Append source to message for tracking
+                    const source = 'trusttranslated.com';
+                    const userMessage = document.getElementById('message').value;
+                    const messageWithSource = `${userMessage}\n\n---\nSource: ${source}`;
+
                     const formData = {
                         name: document.getElementById('name').value,
                         email: document.getElementById('email').value,
                         company: document.getElementById('company').value,
-                        message: document.getElementById('message').value
+                        message: messageWithSource
                     };
 
                     // Update UI to loading state
@@ -2020,9 +2056,16 @@
                         });
 
                         if (response.ok) {
-                            formStatus.textContent = "Message sent! I'll get back to you soon.";
+                            // Hide the form and show thank you message
+                            contactForm.style.display = 'none';
+                            formStatus.innerHTML = `
+                                <div class="thank-you-message">
+                                    <span class="thank-you-icon">✓</span>
+                                    <h3>Thanks!</h3>
+                                    <p>We'll be in touch soon.</p>
+                                </div>
+                            `;
                             formStatus.className = 'form-status success';
-                            contactForm.reset();
                         } else {
                             const data = await response.json();
                             throw new Error(data.error || 'Something went wrong.');
